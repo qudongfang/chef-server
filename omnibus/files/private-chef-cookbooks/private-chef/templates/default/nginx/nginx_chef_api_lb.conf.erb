@@ -16,6 +16,12 @@
       ssl_protocols <%= @ssl_protocols %>;
       ssl_ciphers <%= @ssl_ciphers %>;
       ssl_prefer_server_ciphers on;
+
+      <% if node['private_chef']['nginx']['ssl_client_ca'] -%>
+        ssl_verify_client on;
+        ssl_client_certificate <%= node['private_chef']['nginx']['ssl_client_ca'] %>
+        ssl_verify_depth 10;
+      <% end -%>
     <% end %>
     root <%= File.join(@dir, "html") %>;
     client_max_body_size <%= @client_max_body_size %>;
