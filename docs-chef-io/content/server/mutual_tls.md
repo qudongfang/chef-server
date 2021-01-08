@@ -1,18 +1,25 @@
 +++
-title = "Mutual Tls"
+title = "Mutual TLS"
 
 date = 2021-01-05T15:18:55-08:00
 draft = false
 
 [menu]
   [menu.server]
-    title = "Mutual Tls"
-    identifier = "server/Mutual Tls"
+    title = "Mutual TLS"
+    identifier = "server/Mutual TLS"
     parent = "server"
     weight = 10
+
 +++
 
-## Configuring Mutual TLS for Chef Server
+## Configuring Mutual TLS (mTLS) for Chef Server
+
+Transport layer security (or “TLS”) provides a mechanism by which a client can be assured that it is talking to a server in a secure fashion. The server provides a certificate and public key which the client can use to encrypt and decrypt traffic to and from the server with.  
+
+But that only covers the server to client traffic - the client is able to verify the server but not the other way around. The client does not have to provide any type of identity details to the server. And that's fine, that's how HTTPS traffic mostly works. 
+
+What happens, though, if the server wants to ensure that it is talking to a known client that it can verify? In that case, the client needs to provide a certificate keypair that the server can then use to assure itself that it is talking to a known, valid client. This is what mTLS, or Mutual TLS does.
 
 This document assumes you are going to configure your own CA infrastructure to secure your Chef server and users with. We are using OpenSSL.
 
