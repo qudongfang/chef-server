@@ -15,24 +15,24 @@ draft = false
 
 ## Configuring Mutual TLS (mTLS) for Chef Server
 
-Transport layer security (or “TLS”) provides a mechanism by which a client can be assured that it is talking to a server in a secure fashion. The server provides a certificate and public key which the client can use to encrypt and decrypt traffic to and from the server with.  
+Transport layer security (or “TLS”) provides a mechanism by which a client can be assured that it is talking to a server in a secure fashion. The server provides a certificate and public key which the client can use to encrypt and decrypt traffic to and from the server with.
 
-But that only covers the server to client traffic - the client is able to verify the server but not the other way around. The client does not have to provide any type of identity details to the server. And that's fine, that's how HTTPS traffic mostly works. 
+But that only covers the server to client traffic - the client is able to verify the server but not the other way around. The client does not have to provide any type of identity details to the server. And that's fine, that's how HTTPS traffic mostly works.
 
 What happens, though, if the server wants to ensure that it is talking to a known client that it can verify? In that case, the client needs to provide a certificate keypair that the server can then use to assure itself that it is talking to a known, valid client. This is what mTLS, or Mutual TLS does.
 
 This document assumes you are going to configure your own CA infrastructure to secure your Chef server and users with. We are using OpenSSL.
 
-In our example configuration, you will create a Root CA, an Intermediate CA, and then certificates for both your Chef Server and a user. Each additional user will need a unique certificate. All of this work should be executed from your Chef Workstation. It is considered a security best practice to use an Intermediate CA to create certificates from in order to isolate the Root CA. 
+In our example configuration, you will create a Root CA, an Intermediate CA, and then certificates for both your Chef Server and a user. Each additional user will need a unique certificate. All of this work should be executed from your chef workstation. It is considered a security best practice to use an Intermediate CA to create certificates from in order to isolate the Root CA.
 
 ### Creating the Root CA
 
 [Reference]: https://jamielinux.com/docs/openssl-certificate-authority/create-the-root-pair.html
 
-From your Chef Workstation connect to your Chef Server and execute the following commands to create the necessary directory structure for your certificate server
+From your chef workstation connect to your Chef Server and execute the following commands to create the necessary directory structure for your certificate server
 
 ```bash
-$ mkdir /root/ca 
+$ mkdir /root/ca
 $ cd /root/ca
 $ mkdir certs crl newcerts private
 $ chmod 700 private
@@ -78,7 +78,7 @@ Email Address []:webmaster@friedlandershosiery.com
 $ chmod 444 certs/ca.cert.pem
 ```
 
-Notice that for the Common Name we used a full proper name and NOT a URL. This is important to do to keep various certificates distinct and distinguishable from each other. 
+Notice that for the Common Name we used a full proper name and NOT a URL. This is important to do to keep various certificates distinct and distinguishable from each other.
 
 Now you can verify the root certificate
 
@@ -88,7 +88,7 @@ $ openssl x509 -noout -text -in /certs/ca.cert.pem
 
 ### Creating the Intermediate CA
 
-Still connected to your Chef Server from your Chef Workstation you need to create a new directory structure for your Intermediate CA
+Still connected to your Chef Server from your chef workstation you need to create a new directory structure for your Intermediate CA
 
 ```bash
 $ mkdir /root/ca/intermediate
@@ -105,7 +105,7 @@ Add a crlnumber file to your Intermediate CA to keep track of certificate revoca
 $ echo 1000 > /root/ca/intermediate/crlnumber
 ```
 
-Now you need to create an openssl.cnf file for your Intermediate CA. See the Intermediate CA example at the end of this document for how we set that up. You'll need to configure the various fields that are marked for you. You'll also need to configure SAN names for your server as illustrated in the [ alt_names ] section. Those alternative names will be used during the creation of the certificate for your chef server. 
+Now you need to create an openssl.cnf file for your Intermediate CA. See the Intermediate CA example at the end of this document for how we set that up. You'll need to configure the various fields that are marked for you. You'll also need to configure SAN names for your server as illustrated in the [ alt_names ] section. Those alternative names will be used during the creation of the certificate for your chef server.
 
 Once that file is created and placed in the /root/ca/intermediate folder, we need to create a key with which we will create the intermediate CA certificate
 
@@ -161,7 +161,7 @@ Now you should test the certificate with the following commands to ensure it was
 ```bash
 $ openssl x509 -noout -text \
       -in intermediate/certs/intermediate.cert.pem
-      
+
 $ openssl verify -CAfile certs/ca.cert.pem \
       intermediate/certs/intermediate.cert.pem
 
@@ -196,8 +196,8 @@ State or Province Name []:WA
 Locality Name []:Seattle
 Organization Name []:Friedlanders Hosiery
 Organizational Unit Name []:IT
-Common Name []:www.friedlandershosiery.com 
-Email Address []:webmaster@friedlandershosiery.com 
+Common Name []:www.friedlandershosiery.com
+Email Address []:webmaster@friedlandershosiery.com
 ```
 
 Now we can create the server certificate we need
@@ -224,24 +224,24 @@ $ chmod 444 intermediate/certs/server-chain.cert.pem
 
 ### Securing your Chef Server with your New Certificate Chain file
 
-Now that we have a proper server certificate (chain) we will add that to our Chef Server and restart the server to incorporate it. Connect to your Chef Server from your Chef Workstation again. 
+Now that we have a proper server certificate (chain) we will add that to our Chef Server and restart the server to incorporate it. Connect to your Chef Server from your chef workstation again.
 
 [Reference]: https://docs.chef.io/server/server_security/
 
-We need to create a Chef Server configuration file if you haven't already done so. 
+We need to create a Chef Server configuration file if you haven't already done so.
 
 ```bash
 $ touch /etc/opscode/chef-server.rb
 ```
 
-In that file add these lines. 
+In that file add these lines.
 
 ```ruby
 nginx['ssl_certificate'] = '/your/path/certs/server-chain.cert.pem'
 nginx['ssl_certificate_key'] = '/your/path/www.friedlandershosiery.com.key.pem'
 ```
 
-Save that file and now we need to update Chef Server. 
+Save that file and now we need to update Chef Server.
 
 ```bash
 $ sudo chef-server-ctl reconfigure
@@ -249,11 +249,11 @@ $ sudo chef-server-ctl reconfigure
 
 ### Test a Connection to your Chef Server
 
-If you open a browser instance and try to connect to your Chef Server now you should get the expected error that the certificate is not trusted. 
+If you open a browser instance and try to connect to your Chef Server now you should get the expected error that the certificate is not trusted.
 
 ### Add the Root CA, Intermediate CA and Server Certs to your local System
 
-Now you need to add the certificates from your new Root and Intermediate CA to your Chef Workstation.
+Now you need to add the certificates from your new Root and Intermediate CA to your chef workstation.
 
 ##### MacOS:
 
@@ -299,7 +299,7 @@ to be sent with your certificate request
 A challenge password []:
 An optional company name []:Friedlander Hosiery
 
-$ openssl x509 -req -in billg.csr -CA certs/intermediate.cert.pem -CAkey private/intermediate.key.pem -out certs/billg.cert.pem -CAcreateserial -days 365 -sha256 
+$ openssl x509 -req -in billg.csr -CA certs/intermediate.cert.pem -CAkey private/intermediate.key.pem -out certs/billg.cert.pem -CAcreateserial -days 365 -sha256
 -extfile openssl.cnf
 ```
 
@@ -314,7 +314,7 @@ $ openssl x509 -noout -text -in certs/billg.cert.pem
 
 ### Optional But Recommended - Convert the user keypair to P12
 
-One way to test connectivity between your Chef Workstation and the Chef Server AFTER adding support for mutual TLS is to create a .P12 file from your user-specific certificate-key pair. You'll load that into the appropriate keystore on your client and then you can attempt to connect to your Chef Server in a browser. When configured properly, the browser will prompt you to select the client certificate (i.e. your P12) and will attempt to connect from there. 
+One way to test connectivity between your chef workstation and the Chef Server AFTER adding support for mutual TLS is to create a .P12 file from your user-specific certificate-key pair. You'll load that into the appropriate keystore on your client and then you can attempt to connect to your Chef Server in a browser. When configured properly, the browser will prompt you to select the client certificate (i.e. your P12) and will attempt to connect from there.
 
 ```bash
 $ openssl pkcs12 -export -out certs/billg.p12 -inkey private/billg.key.pem -in certs/billg.cert.pem
@@ -355,9 +355,9 @@ When the services have all restarted correctly you can point your browser at htt
 
 ### Configuring local settings for chef-client and knife
 
-The final configuration piece you need now that TLS is setup is to configure your local system to use the correct certificates to communicate to the Chef Server with. These settings can be used in either your chef-client.rb or your /users/you/.chef/credentials file. 
+The final configuration piece you need now that TLS is setup is to configure your local system to use the correct certificates to communicate to the Chef Server with. These settings can be used in either your chef-client.rb or your /users/you/.chef/credentials file.
 
-Note that you created your user with the Intermediate CA so you'll only need to use and specify the Root CA in the configuration. 
+Note that you created your user with the Intermediate CA so you'll only need to use and specify the Root CA in the configuration.
 
 ```ruby
 ssl_ca_path = "C:\\opscode"

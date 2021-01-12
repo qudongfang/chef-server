@@ -20,7 +20,7 @@
       <% if node['private_chef']['nginx']['ssl_client_ca'] -%>
         ssl_verify_client on;
         ssl_client_certificate <%= node['private_chef']['nginx']['ssl_client_ca'] %>
-        ssl_verify_depth 10;
+        ssl_verify_depth 2;
       <% end -%>
     <% end %>
     root <%= File.join(@dir, "html") %>;
