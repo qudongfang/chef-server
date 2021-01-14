@@ -299,8 +299,11 @@ to be sent with your certificate request
 A challenge password []:
 An optional company name []:Friedlander Hosiery
 
-$ openssl x509 -req -in billg.csr -CA certs/intermediate.cert.pem -CAkey private/intermediate.key.pem -out certs/billg.cert.pem -CAcreateserial -days 365 -sha256
--extfile openssl.cnf
+$ openssl ca -config openssl.cnf \
+            -extensions usr_cert \
+            -days 375 -notext -md sha256 \
+            -in billg.csr \
+            -out certs/billg.cert.pem
 ```
 
 Now verify the certificate, key and certificate request with the following commands
