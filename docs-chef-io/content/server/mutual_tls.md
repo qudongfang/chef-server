@@ -342,10 +342,11 @@ Open Certmgr against the Current User and put the p12 file into [Current User\Pe
 
 ### Turning on TLS Support on the Chef Server
 
-The final piece needed to enable mutual TLS support is to go back to the chef-server.rb file and add the following line to it:
+The final piece needed to enable mutual TLS support is to go back to the chef-server.rb file and add the following line to it. Please also add a value for the verify_depth to describe how many Certificate Authorities exist on top of your Server Certificate - In our case here, we have a Root CA and an Intermediate CA so our depth value is 2. 
 
 ```ruby
 nginx['ssl_client_ca'] = "/your/path/ca.cert.pem"
+nginx['ssl_verify_depth'] = 2
 ```
 
 Now we need to update Chef Server to accept that last change. Run this again:
