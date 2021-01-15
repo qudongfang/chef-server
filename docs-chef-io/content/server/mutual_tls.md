@@ -7,8 +7,8 @@ draft = true
 [menu]
   [menu.server]
     title = "Mutual TLS"
-    identifier = "server/Mutual TLS"
-    parent = "server"
+    identifier = "server/configure/mutual_tls"
+    parent = "server/configure"
 
 +++
 
